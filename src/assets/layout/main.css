@@ -1,0 +1,33 @@
+* {
+    box-sizing: border-box;
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+table {
+    width: 100%;
+    border: gray solid 1px;
+}
+
+table td {
+    padding: 10px;
+    border: gray solid 1px;
+}
+
+button {
+    padding: 5px;
+    cursor: pointer;
+    min-width: 80%;
+    border: black solid 2px;
+    border-radius: 5px;
+}
+
+.divisor {
+    width: 50%;
+    float: left;
+}
+
+p {
+    text-align: center;
+}
