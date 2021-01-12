@@ -93,11 +93,11 @@ class StoreProducts extends Component {
                     <table>
                         <thead>
                         <tr>
-                            <td>ID</td>
-                            <td>Product</td>
-                            <td>Quantity in stock</td>
-                            <td>Price</td>
-                            <td>Action</td>
+                            <th>ID</th>
+                            <th>Product</th>
+                            <th>Quantity in stock</th>
+                            <th>Price</th>
+                            <th>Action</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -140,10 +140,10 @@ class CartStore extends Component<InterfaceProps> {
                     <table>
                         <thead>
                         <tr>
-                            <td>Product</td>
-                            <td>Quantity</td>
-                            <td>Total price</td>
-                            <td>Action</td>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Total price</th>
+                            <th>Action</th>
                         </tr>
                         {this.props.cart.map((cart: any, index) => cart.id !== 0 &&
                             <tr key={index}>
