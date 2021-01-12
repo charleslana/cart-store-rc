@@ -58,7 +58,7 @@ export class Products {
         {
             id: 9,
             name: 'Product 9',
-            quantity: 10,
+            quantity: 5,
             price: 90.00
         },
         {
