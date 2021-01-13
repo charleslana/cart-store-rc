@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {ChangeEvent, Component} from 'react';
 import {Products} from '../../api/Products';
 
 let items: Products;
@@ -7,6 +7,14 @@ items = new Products();
 interface InterfaceProps {
     cart: Object[];
     function: Function;
+    totalPayable: number;
+}
+
+interface InterfaceCart {
+    id: number;
+    name: string;
+    quantity: number;
+    price: number;
 }
 
 class StoreProducts extends Component {
@@ -19,48 +27,72 @@ class StoreProducts extends Component {
                 quantity: 0,
                 price: 0
             }
-        ]
+        ],
+        totalPayable: 0,
+        selectedQuantity: 1,
+        notify: null
+    }
+
+    addQuantity = (event: ChangeEvent<HTMLInputElement>) => {
+        let value = parseInt(event.target.value);
+        if(isNaN(value) || value < 1) {
+            value = 1;
+        }
+        this.setState({selectedQuantity: value});
+    }
+
+    openNotify = (value: string | null = null) => {
+        this.setState({notify: value});
     }
 
     addCart = (id: number) => {
+
+        this.openNotify();
 
         const findItem = items.items.find(item => item.id === id);
 
         const cartFilter = this.state.cart.filter((cart: any) => cart.id === findItem?.id);
 
-        console.log(findItem);
+        const verifyQuantity = findItem!.quantity - this.state.selectedQuantity;
 
-        findItem!.quantity--;
+        if (verifyQuantity < 0) {
+            console.log('Insufficient');
+            return this.openNotify('Insufficient quantity in stock.');
+        }
+
+        findItem!.quantity = verifyQuantity;
 
         if (cartFilter.length) {
-            const findIndex = this.state.cart.findIndex((cart: any) => cart.id === findItem?.id);
+            const findIndex = this.state.cart.findIndex((cart: InterfaceCart) => cart.id === findItem?.id);
 
             console.log(findIndex);
 
-            if (findIndex !== -1 && findItem!.quantity >= 0) {
+            if (findIndex !== -1) {
                 console.log('update');
 
                 const {cart} = this.state;
 
-                cart[findIndex].quantity++;
+                cart[findIndex].quantity += this.state.selectedQuantity;
 
                 cart[findIndex].price = findItem!.price * cart[findIndex].quantity;
 
                 this.setState({
                     ...this.state,
-                    cart
+                    cart,
+                    totalPayable: this.state.totalPayable + (findItem!.price * this.state.selectedQuantity)
                 });
             }
         } else {
             console.log('add');
             this.setState({
+                totalPayable: this.state.totalPayable + (findItem!.price * this.state.selectedQuantity),
                 cart: [
                     ...this.state.cart,
                     {
                         id: findItem?.id,
                         name: findItem?.name,
-                        quantity: 1,
-                        price: findItem?.price
+                        quantity: this.state.selectedQuantity,
+                        price: findItem!.price * this.state.selectedQuantity
                     }
                 ]
             });
@@ -68,7 +100,7 @@ class StoreProducts extends Component {
     }
 
     delCart = (id: number) => {
-        const findIndex = this.state.cart.findIndex((object: any) => object.id === id);
+        const findIndex = this.state.cart.findIndex((object: InterfaceCart) => object.id === id);
         if (findIndex !== -1) {
 
             const findItem = items.items.find(item => item.id === id);
@@ -77,10 +109,13 @@ class StoreProducts extends Component {
 
             findItem!.quantity += cart[findIndex].quantity;
 
+            const discountPrice = cart[findIndex]?.price;
+
             this.state.cart.splice(findIndex, 1);
 
             this.setState({
-                ...this.state.cart
+                ...this.state.cart,
+                totalPayable: this.state.totalPayable - discountPrice
             });
         }
     }
@@ -108,8 +143,9 @@ class StoreProducts extends Component {
                                 <td>{item.quantity}</td>
                                 <td>{item.price}</td>
                                 <td>
+                                    <input type="number" onChange={this.addQuantity} value={this.state.selectedQuantity}/>
                                     {item.quantity ?
-                                        <button onClick={() => this.addCart(item.id)}>Add 1</button>
+                                        <button onClick={() => this.addCart(item.id)}>Add</button>
                                         :
                                         <p>Sold off</p>
                                     }
@@ -120,8 +156,15 @@ class StoreProducts extends Component {
                     </table>
                 </div>
                 <div className={'divisor'}>
-                    <CartStore cart={this.state.cart} function={this.delCart}/>
+                    <CartStore cart={this.state.cart} function={this.delCart} totalPayable={this.state.totalPayable}/>
                 </div>
+                {this.state.notify &&
+                    <div className={'backDrop'}>
+                        <div className={'message'}>{this.state.notify}
+                            <button className={'close'} onClick={() => this.openNotify()}>x</button>
+                        </div>
+                    </div>
+                }
             </div>
         );
     }
@@ -135,7 +178,7 @@ class CartStore extends Component<InterfaceProps> {
 
         return (
             <div>
-                <h1>My cart</h1>
+                <h1>My cart, total payable: {this.props.totalPayable}</h1>
                 {total ?
                     <table>
                         <thead>

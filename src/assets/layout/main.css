@@ -21,6 +21,7 @@ button {
     min-width: 80%;
     border: black solid 2px;
     border-radius: 5px;
+    width: 80%;
 }
 
 .divisor {
@@ -30,4 +31,47 @@ button {
 
 p {
     text-align: center;
+}
+
+input {
+    padding: 5px;
+    min-width: 80%;
+    border: black solid 2px;
+    border-radius: 5px;
+    width: 80%;
+    margin-bottom: 5px;
+}
+
+.backDrop {
+    position: fixed;
+    background-color: rgba(0,0,0,.5);
+    z-index: 1;
+    bottom: 0;
+    top: 0;
+    right: 0;
+    left: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+.backDrop .message {
+    position: relative;
+    width: 50%;
+    height: 10%;
+    background-color: white;
+    border-radius: 5px;
+    text-align: center;
+    line-height: 10vh;
+    margin: 0 auto;
+}
+
+.backDrop .close {
+    min-width: 10%;
+    width: auto;
+    position: absolute;
+    right: 1px;
+    top: 1px;
+    font-size: 20px;
+    padding: 0;
 }
